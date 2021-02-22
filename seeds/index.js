@@ -1,9 +1,7 @@
-const express = require("express");
-const path = require("path");
 const mongoose = require("mongoose");
-const Campground = require("../models/campground");
 const cities = require("./cities");
 const { places, descriptors } = require("./seedHelpers");
+const Campground = require("../models/campground");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
   useNewUrlParser: true,
@@ -12,25 +10,46 @@ mongoose.connect("mongodb://localhost:27017/yelp-camp", {
 });
 
 const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection errors:"));
+
+db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
-  console.log("db connected");
+  console.log("Database connected");
 });
 
 const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
-const seedDB = async (req, res) => {
+const seedDB = async () => {
   await Campground.deleteMany({});
   for (let i = 0; i < 50; i++) {
     const random1000 = Math.floor(Math.random() * 1000);
     const price = Math.floor(Math.random() * 20) + 10;
     const camp = new Campground({
+      //YOUR USER ID
+      author: "6032de2e79b6b1381e4e91c2",
       location: `${cities[random1000].city}, ${cities[random1000].state}`,
       title: `${sample(descriptors)} ${sample(places)}`,
-      image: "https://source.unsplash.com/collection/483251",
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Commodi dolorum quis cumque vel? Error dolores ullam neque. Voluptate officia nihil, quos qui exercitationem praesentium, doloremque, debitis temporibus totam facilis ipsa.",
+        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam dolores vero perferendis laudantium, consequuntur voluptatibus nulla architecto, sit soluta esse iure sed labore ipsam a cum nihil atque molestiae deserunt!",
       price,
+      geometry: {
+        type: "Point",
+        coordinates: [
+          cities[random1000].longitude,
+          cities[random1000].latitude,
+        ],
+      },
+      images: [
+        {
+          url:
+            "https://res.cloudinary.com/dkprzjf0c/image/upload/v1613975700/Campry/baxcxkwy3a8mg7hbkw07.jpg",
+          filename: "Campry/baxcxkwy3a8mg7hbkw07",
+        },
+        {
+          url:
+            "https://res.cloudinary.com/dkprzjf0c/image/upload/v1613975714/Campry/avtaxum4jyjsd3io8w1u.jpg",
+          filename: "Campry/avtaxum4jyjsd3io8w1u",
+        },
+      ],
     });
     await camp.save();
   }
