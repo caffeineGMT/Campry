@@ -1,7 +1,4 @@
 <!-- markdownlint-disable MD025-->
-
-# YelpCamp
-
 # app brief
 
 Campground provides a platform to CRUD, map, post review
